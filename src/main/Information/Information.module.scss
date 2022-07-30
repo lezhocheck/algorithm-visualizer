@@ -1,0 +1,46 @@
+@use 'src/styles/index' as index;
+
+.container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 50;
+  background: rgba(index.$primaryBackground, 0.9);
+  display: none;
+  align-items: center;
+  flex-direction: column;
+}
+
+.header {
+  width: 95%;
+  height: 4rem;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+.title {
+  width: 95%;
+  height: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: index.$primaryAccent;
+  font-size: 3rem;
+}
+
+.textArea {
+  width: 80%;
+  margin: 4rem;
+  line-height: 2.5rem;
+  height: auto;
+  display: flex;
+  align-items: center;
+  color: index.$text;
+  font-size: 1.3rem;
+}
+
+.image {
+  width: 30rem;
+  height: 20rem;
+}

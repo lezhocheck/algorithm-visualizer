@@ -1,0 +1,20 @@
+@use 'src/styles/index' as index;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-left: 2rem;
+  justify-content: center;
+  width: 100%;
+}
+
+.title {
+  color: index.$text;
+  font-size: 3rem;
+}
+
+.st_container {
+  display: flex;
+  gap: 5rem;
+}

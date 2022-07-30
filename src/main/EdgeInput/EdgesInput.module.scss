@@ -1,0 +1,16 @@
+@use 'src/styles/index' as index;
+
+.container {
+  display: flex;
+  border: 1px solid index.$secondaryBackground;
+  flex-direction: column;
+  width: 90%;
+  height: 14rem;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

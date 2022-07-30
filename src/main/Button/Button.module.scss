@@ -1,0 +1,26 @@
+@use 'src/styles/index' as index;
+
+.button {
+  background: index.$primaryObject;
+  border: none;
+  border-radius: 10px;
+  font-size: 3vmin;
+  color: white;
+  box-shadow: 0 5px 0 rgba(index.$primaryObject, 0.3),
+    0 3px 25px index.$secondaryBackground;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    cursor: pointer;
+    background: index.$primaryAccent;
+    box-shadow: 0 5px 0 rgba(index.$primaryObject, 0.3),
+      0 3px 50px index.$secondaryBackground;
+  }
+
+  &:active {
+    background: index.$primaryFocus;
+    transform: scale(1.05);
+  }
+}

@@ -1,0 +1,53 @@
+@use 'src/styles/index' as index;
+
+.container {
+  height: 30px;
+
+  &:hover > label::before {
+    box-shadow: 0 5px 0 rgba(index.$primaryObject, 0.3),
+    0 3px 50px index.$secondaryBackground;
+  }
+}
+
+.checkbox {
+  display: none;
+
+  & + label {
+    position: relative;
+    font-size: 1.5rem;
+    padding-left: 45px;
+    cursor: pointer;
+    display: inline-block;
+    color: index.$text;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      border-radius: 5px;
+      width: 30px;
+      height: 30px;
+      background: index.$primaryObject;
+      box-shadow: 0 5px 0 rgba(index.$primaryObject, 0.3),
+      0 3px 25px index.$secondaryBackground;
+    }
+  }
+
+  &:checked + label::after {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 2px;
+    width: 8px;
+    height: 18px;
+    border: solid index.$text;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+  }
+}

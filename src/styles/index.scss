@@ -1,0 +1,53 @@
+$primaryBackground: #191A19;
+$primaryBackgroundAccent: #313131;
+$secondaryBackground: #1E5128;
+$primaryObject: #4E9F3D;
+$primaryAccent: #69c456;
+$primaryFocus: #ace9a8;
+$text: #f3f3f3;
+
+body {
+  background: $primaryBackground;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  font-size: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+.material-icon {
+  font-family: 'Material Icons', serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 36px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}

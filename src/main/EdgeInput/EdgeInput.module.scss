@@ -1,0 +1,15 @@
+@use 'src/styles/index' as index;
+
+.text {
+  display: flex;
+  align-items: center;
+  color: index.$primaryAccent;
+  font-size: 1.3rem;
+}
+
+.container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin: 0.5rem 0.5rem 0.5rem 0.5rem;
+}

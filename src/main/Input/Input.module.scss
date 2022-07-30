@@ -1,0 +1,62 @@
+@use 'src/styles/index' as index;
+
+.container {
+  position: relative;
+  padding: 15px 0 0;
+  display: flex;
+  gap: 0.3rem;
+}
+
+.input {
+  border: 0;
+  outline: 0;
+  width: 100%;
+  border-bottom: 2px solid index.$primaryObject;
+  font-size: 1rem;
+  color: index.$text;
+  padding: 7px 0;
+  background: transparent;
+  transition: border-color 0.2s;
+
+  &::placeholder {
+    color: transparent;
+  }
+
+  &:placeholder-shown ~ .label {
+    font-size: 1rem;
+    cursor: text;
+    top: 20px;
+  }
+
+  &:required,&:invalid { box-shadow:none; }
+}
+
+.label {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 0.7rem;
+  color: index.$secondaryBackground;
+}
+
+.input:focus {
+  ~ .label {
+    position: absolute;
+    top: 0;
+    display: block;
+    transition: 0.2s;
+    font-size: 1rem;
+    color: index.$primaryAccent;
+    font-weight: 700;
+  }
+  font-weight: 700;
+  border-bottom: 2px solid index.$primaryAccent;
+}
+
+.sign {
+  display: none;
+  color: red;
+  font-size: 24px;
+}
