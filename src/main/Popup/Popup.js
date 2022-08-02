@@ -2,7 +2,8 @@ import EventComponent from "../../EventComponent";
 import classes from './Popup.module.scss';
 import Component from "../../Component";
 import Vector2 from "../utils/Vector2";
-import UtilsError from "../utils/UtilsError";
+import Validator from "../../Validator";
+import LayoutError from "../LayoutError";
 
 const Popup = function (properties) {
 
@@ -17,9 +18,7 @@ const Popup = function (properties) {
     properties.closePopupFunction(close);
 
     properties.setShowFunction((position, text) => {
-        if (!(position instanceof Vector2)) {
-            throw new UtilsError(`Invalid position value`);
-        }
+        Validator.checkInstance(LayoutError, Vector2, {position: position});
         component.update({
             attributes: {
                 style: `display: inline-block; top: ${position.y}px; left: ${position.x}px;`

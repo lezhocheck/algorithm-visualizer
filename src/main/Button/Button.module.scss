@@ -5,12 +5,25 @@
   border: none;
   border-radius: 10px;
   font-size: 3vmin;
-  color: white;
+  color: index.$text;
   box-shadow: 0 5px 0 rgba(index.$primaryObject, 0.3),
     0 3px 25px index.$secondaryBackground;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &:disabled {
+    background: rgba(index.$text, 0.1);
+    color: rgba(index.$text, 0.2);
+    box-shadow: none;
+
+    &:hover {
+      background: rgba(index.$text, 0.1);
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+  }
 
   &:hover {
     cursor: pointer;

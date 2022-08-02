@@ -2,7 +2,6 @@ import Component from "../../Component";
 import classes from './Menu.module.scss';
 import Button from "../Button/Button";
 import EventComponent from "../../EventComponent";
-import MenuItem from "./MenuItem";
 
 const Menu = function (properties) {
 
@@ -55,8 +54,7 @@ const Menu = function (properties) {
                             'Algorithm visualizer'
                         ]
                     }),
-                    new Button({width: 'auto',
-                        height: 'auto',
+                    new Button({
                         onClick: disable,
                         children: [
                             new Component('span', {
@@ -76,22 +74,41 @@ const Menu = function (properties) {
                     className: classes.elementsContainer
                 },
                 children: [
-                    new MenuItem({
-                        text: 'S-T minimum cut',
-                        active: true
+                    new Button({
+                        attributes: {
+                            style: 'height: 3rem;'
+                        },
+                        children: [
+                            'S-T minimum cut'
+                        ]
                     }),
-                    new MenuItem({
-                        text: 'To be continued...',
-                        active: false
+                    new Button({
+                        attributes: {
+                            style: 'height: 3rem;',
+                            disabled: true
+                        },
+                        children: [
+                            'To be continued...'
+                        ]
                     }),
-                    new MenuItem({
-                        text: 'To be continued...',
-                        active: false
+                    new Button({
+                        attributes: {
+                            style: 'height: 3rem;',
+                            disabled: true
+                        },
+                        children: [
+                            'To be continued...'
+                        ]
                     }),
-                    new MenuItem({
-                        text: 'To be continued...',
-                        active: false
-                    })
+                    new Button({
+                        attributes: {
+                            style: 'height: 3rem;',
+                            disabled: true
+                        },
+                        children: [
+                            'To be continued...'
+                        ]
+                    }),
                 ]
             })
         ]

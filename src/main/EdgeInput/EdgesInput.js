@@ -31,10 +31,15 @@ const EdgesInput = function (properties) {
         update();
     }
 
-    properties.setDisableAll(() => {
+    properties.setDisableAllHints(() => {
         edges.forEach(x => {
-            x.setAbleFunction(true);
+            x.setActiveFunction(true);
         });
+    });
+
+    properties.setClear(() => {
+        container.removeChildren();
+        edges.length = 0;
     });
 
     properties.setGetEdgesFunction(() => {
@@ -64,18 +69,18 @@ const EdgesInput = function (properties) {
         let getEdgeFunction;
         let setIndexFunction;
         let setValidationData;
-        let setAble;
+        let setActive;
         const edgeInput = new EdgeInput({
             onDeleteButtonClick: onDeleteEdgeButtonClick,
             index: edges.length,
             setGetEdgeFunction: (value) => getEdgeFunction = value,
             setSetIndexFunction: (value) => setIndexFunction = value,
             setSetValidationDataFunction: (value) => setValidationData = value,
-            setAbleFunction: (value) => setAble = value
+            setActiveFunction: (value) => setActive = value
         });
         edges.push({edgeInput: edgeInput, getEdgeFunction: getEdgeFunction,
             setIndexFunction: setIndexFunction,
-            setValidationData: setValidationData, setAbleFunction: setAble});
+            setValidationData: setValidationData, setActiveFunction: setActive});
         update();
     }
 
@@ -90,8 +95,6 @@ const EdgesInput = function (properties) {
         children: [
             container,
             new Button({
-                width: '2rem',
-                height: '2rem',
                 attributes: {
                     style: 'margin-left: 70%; margin-top: 1rem;'
                 },

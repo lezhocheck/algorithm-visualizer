@@ -1,14 +1,9 @@
 import CanvasComponent from "../../CanvasComponent";
 import styles from "../Canvas/Canvas.module.scss";
 import Scene from "../utils/Scene";
-import Transformation from "../utils/transformation/Transformation";
 import Vector2 from "../utils/Vector2";
 import Grid from "../utils/Grid";
 import {Graph} from "../utils/graph/Graph";
-import EdgeView from "../utils/graph/EdgeView";
-import {Edge} from "../utils/graph/AdjacencyTable";
-import Circle from "../utils/Circle";
-import Colors from "../utils/Colors";
 
 const Canvas = function (properties) {
 
@@ -18,12 +13,12 @@ const Canvas = function (properties) {
     const gridSize = new Vector2(10000, 10000);
 
     properties.setFindFunction(function () {
-        const network = contextObject.baseObjectContainer.findOfType(Graph)[0];
-        if (network == null) {
+        const graph = contextObject.baseObjectContainer.findOfType(Graph)[0];
+        if (graph == null) {
             return;
         }
-        scene.scale = canvasParams.maxCoordinate / network.size.maxCoordinate;
-        scene.transform = network.center.multiply(-1 * scene.scale).add(canvasParams.divide(2));
+        scene.scale = canvasParams.maxCoordinate / graph.size.maxCoordinate;
+        scene.transform = graph.center.multiply(-1 * scene.scale).add(canvasParams.divide(2));
     });
 
     function onStart(context) {
@@ -38,7 +33,7 @@ const Canvas = function (properties) {
 
     function onDraw(context) {
         context.clearAll();
-        context.draw(new Transformation(scene.transform, scene.scale));
+        context.draw(scene.transform, scene.scale);
     }
 
     return new CanvasComponent({

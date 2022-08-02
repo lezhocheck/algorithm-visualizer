@@ -7,6 +7,7 @@ import BaseObject from "../BaseObject";
 import Scene from "../Scene";
 import Text from "../Text";
 import {GraphNode} from "./Graph";
+import Validator from "../../../Validator";
 
 export default class EdgeView extends BaseObject {
 
@@ -25,16 +26,10 @@ export default class EdgeView extends BaseObject {
     static #EDGE_DETECTION_OFFSET = 0.1;
 
     constructor(start, end, scene, edge) {
-        if (!(start instanceof GraphNode) || !(end instanceof GraphNode)) {
-            throw new UtilsError(`Parameters 'start' and 'end' must be of type 'GraphNode'`);
-        }
+        Validator.checkInstance(UtilsError, GraphNode, {start: start}, {end: end});
         super(start.position);
-        if (!(scene instanceof Scene)) {
-            throw new UtilsError(`Unknown type of 'scene' parameter. Expected 'Scene'`);
-        }
-        if (!(edge instanceof Edge)) {
-            throw new UtilsError(`Unknown type of 'edge' parameter. Expected 'Edge'`);
-        }
+        Validator.checkInstance(UtilsError, Scene, {scene: scene});
+        Validator.checkInstance(UtilsError, Edge, {edge: edge});
         this.#start = start;
         this.#end = end;
         this.#scene = scene;
@@ -73,9 +68,7 @@ export default class EdgeView extends BaseObject {
     }
 
     set defaultColor(value) {
-        if (!(value instanceof Colors)) {
-            throw new UtilsError(`Parameter 'defaultColor' must be 'Colors'`);
-        }
+        Validator.checkInstance(UtilsError, Colors, {defaultColor: value});
         this.#defaultEdgeColor = value;
     }
 
@@ -89,6 +82,10 @@ export default class EdgeView extends BaseObject {
 
         const offset = GraphNode.RADIUS + size;
         const delta = (this.#line.length - context.convertToAdaptive(offset)) / this.#line.length;
+        if (delta < 0) {
+            return;
+        }
+
         let offsetEnd = start.add(end.subtract(start).multiply(delta));
 
         context.fillColor(this.#line.colors.stroke);

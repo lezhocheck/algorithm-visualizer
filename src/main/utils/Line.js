@@ -2,6 +2,7 @@ import Vector2 from "./Vector2";
 import UtilsError from "./UtilsError";
 import Colors from "./Colors";
 import BaseObject from "./BaseObject";
+import Validator from "../../Validator";
 
 export default class Line extends BaseObject {
 
@@ -11,18 +12,14 @@ export default class Line extends BaseObject {
 
     constructor(start, end, colors, width = 1) {
         super(start);
-        if (!(end instanceof Vector2)) {
-            throw new UtilsError(`Invalid type. Expected 'Vector2' for the 'end' parameter`);
-        }
+        Validator.checkInstance(UtilsError, Vector2, {end: end});
         this.#end = end;
         this.colors = colors;
         this.width = width;
     }
 
     set colors(value) {
-        if (!(value instanceof Colors)) {
-            throw new UtilsError(`Parameter 'colors' must be 'Colors'`);
-        }
+        Validator.checkInstance(UtilsError, Colors, {value: value});
         this.#colors = value;
     }
     get colors() { return this.#colors; }
@@ -30,9 +27,7 @@ export default class Line extends BaseObject {
     get end() { return this.#end; }
     get width() { return this.#width; }
     set width(value) {
-        if (typeof value !== 'number') {
-            throw new UtilsError(`Parameter 'width' must be 'number'`);
-        }
+        Validator.checkInstance(UtilsError, Number, {value: value});
         this.#width = value;
     }
 
@@ -40,7 +35,7 @@ export default class Line extends BaseObject {
 
    draw(context) {
        if (this.#colors.stroke == null) {
-           throw new UtilsError(`This line supports only stroke`);
+           throw new UtilsError(`The 'Line' object supports stroke only`);
        }
        context.strokeColor(this.#colors.stroke);
        context.lineWidth(context.convertToAdaptive(this.width));

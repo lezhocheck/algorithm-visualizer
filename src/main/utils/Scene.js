@@ -1,6 +1,7 @@
 import Vector2 from "./Vector2";
 import UtilsError from "./UtilsError";
 import EdgeView from "./graph/EdgeView";
+import Validator from "../../Validator";
 
 export default class Scene {
 
@@ -33,16 +34,12 @@ export default class Scene {
     }
 
     set scale(value) {
-        if (typeof value !== 'number') {
-            throw new Vector2(`Value must be 'number'`);
-        }
+        Validator.checkInstance(UtilsError, Number, {scale: value});
         this.#scale = value;
     }
 
     set transform(value) {
-        if (!(value instanceof Vector2)) {
-            throw new Vector2(`Value must be 'Vector2'`);
-        }
+        Validator.checkInstance(UtilsError, Vector2, {transform: value});
         this.#transform = value;
     }
     get transform() {
@@ -52,20 +49,6 @@ export default class Scene {
     // In world coordinates
     get mousePosition() {
         return this.#mousePosition.subtract(this.#transform).divide(this.#scale);
-    }
-
-    toWorldCoordinates(point) {
-        if (!(point instanceof Vector2)) {
-            throw new Vector2(`Point must be 'Vector2'`);
-        }
-        return point.subtract(this.#transform).divide(this.#scale);
-    }
-
-    toScreenCoordinates(point) {
-        if (!(point instanceof Vector2)) {
-            throw new Vector2(`Point must be 'Vector2'`);
-        }
-        return point.multiply(this.#scale).add(this.#transform);
     }
 
     onMouseDown(event) {
@@ -108,25 +91,19 @@ export default class Scene {
     }
 
     selectEdge(edgeView) {
-        if (!(edgeView instanceof EdgeView)) {
-            throw new UtilsError(`Unknown type of 'edgeView' parameter. Expected 'EdgeView'`);
-        }
+        Validator.checkInstance(UtilsError, EdgeView, {edgeView: edgeView});
         if (this.#selectedEdgesSet.size === 0) {
             this.#selectedEdgesSet.add(edgeView);
         }
     }
 
     deselectEdge(edgeView) {
-        if (!(edgeView instanceof EdgeView)) {
-            throw new UtilsError(`Unknown type of 'edgeView' parameter. Expected 'EdgeView'`);
-        }
+        Validator.checkInstance(UtilsError, EdgeView, {edgeView: edgeView});
         return this.#selectedEdgesSet.delete(edgeView);
     }
 
     hasEdge(edgeView) {
-        if (!(edgeView instanceof EdgeView)) {
-            throw new UtilsError(`Unknown type of 'edgeView' parameter. Expected 'EdgeView'`);
-        }
+        Validator.checkInstance(UtilsError, EdgeView, {edgeView: edgeView});
         return this.#selectedEdgesSet.has(edgeView);
     }
 

@@ -1,6 +1,7 @@
 import NotImplementedError from "../NotImplementedError";
 import UtilsError from "../UtilsError";
 import CodeObserver from "../CodeObserver";
+import Validator from "../../../Validator";
 
 class Edge {
 
@@ -8,11 +9,8 @@ class Edge {
     static MAX_WEIGHT = 1000;
 
     constructor(startVertex, endVertex, weight = null) {
-        if (typeof startVertex !== 'number' ||
-            typeof endVertex !== 'number' ||
-            typeof weight !== 'number') {
-            throw new UtilsError(`Unknown parameters type. Expected 'number'`)
-        }
+        Validator.checkInstance(UtilsError, Number, {startVertex: startVertex}, {endVertex: endVertex});
+        Validator.checkInstance(UtilsError, [Number, null], {weight: weight});
 
         this.startVertex = startVertex;
         this.endVertex = endVertex;
@@ -49,23 +47,17 @@ class AdjacencyTable extends AdjacencyBase {
     #observer;
 
     constructor(startIndex, vertexCount, observer, oriented = false) {
-        if (typeof vertexCount != 'number') {
-            throw new UtilsError(`Unknown type '${typeof vertexCount}'. Expected 'number'`);
-        }
-        if (typeof startIndex != 'number') {
-            throw new UtilsError(`Unknown type '${typeof startIndex}'. Expected 'number'`);
-        }
+        Validator.checkInstance(UtilsError, Number, {vertexCount: vertexCount});
+        Validator.checkInstance(UtilsError, Number, {startIndex: startIndex});
         if (vertexCount <= 0) {
             throw new UtilsError(`Parameter 'vertexCount' must be greater than '0'`);
         }
-        if (!(observer instanceof CodeObserver)) {
-            throw new UtilsError(`Unknown type '${typeof observer}'. Expected 'Observer'`);
-        }
-        if (typeof oriented != 'boolean') {
-            throw new UtilsError(`Unknown type '${typeof oriented}'. Expected 'boolean'`);
-        }
+
+        Validator.checkInstance(UtilsError, CodeObserver, {observer: observer});
+        Validator.checkInstance(UtilsError, Boolean, {oriented: oriented});
 
         super();
+
         this.#startIndex = startIndex;
         this.#vertexCount = vertexCount;
         this.#container = new Array(vertexCount);
@@ -111,10 +103,9 @@ class AdjacencyTable extends AdjacencyBase {
     }
 
     addEdge(startVertex, endVertex, weight) {
-        if (typeof startVertex !== 'number' ||
-            typeof endVertex !== 'number' || typeof weight !== 'number') {
-            throw new UtilsError(`Invalid arguments`);
-        }
+        Validator.checkInstance(UtilsError, Number, {startVertex: startVertex});
+        Validator.checkInstance(UtilsError, Number, {endVertex: endVertex});
+        Validator.checkInstance(UtilsError, [Number, null], {weight: weight});
         const start = startVertex - this.#startIndex;
         const end = endVertex - this.#startIndex;
 
@@ -167,9 +158,8 @@ class AdjacencyTable extends AdjacencyBase {
     }
 
     minCut(s, t) {
-        if (typeof s !== 'number' || typeof t !== 'number') {
-            throw new UtilsError(`Unknown type of parameter 's' or 't'. Expected 'number'`);
-        }
+        Validator.checkInstance(UtilsError, Number, {s: s});
+        Validator.checkInstance(UtilsError, Number, {t: t});
         return this.#minCut(s, t);
     }
 

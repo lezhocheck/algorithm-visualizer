@@ -16,6 +16,7 @@ const InputData = function (properties) {
     let setValidationData
     let disableAll;
     let getEdges;
+    let clearEdges;
 
     function onSubmitClick() {
         const inputVerticesValue = parseInt(inputVertices.input.getChild(0).value);
@@ -68,6 +69,12 @@ const InputData = function (properties) {
         properties.scene.clearSelectedEdgesSet();
         properties.baseObjectContainer.clearAllOfType(Graph);
         observer.clear();
+        properties.setFindButtonEnabled(true);
+
+        if (randomEdgesValue) {
+            clearEdges();
+        }
+
         const graph = new Graph(properties.grid, properties.scene, adjacencyTable, inputSValue, inputTValue);
         properties.baseObjectContainer.add(graph);
     }
@@ -119,12 +126,14 @@ const InputData = function (properties) {
             new EdgesInput({
                 setSetValidationDataFunction: (value) => setValidationData = value,
                 setGetEdgesFunction: (value) => getEdges = value,
-                setDisableAll: (value) => disableAll = value
+                setDisableAllHints: (value) => disableAll = value,
+                setClear: (value) => clearEdges = value
             }),
             randomEdgesCheckBox,
             new Button({
-                width: '10rem',
-                height: '4rem',
+                attributes: {
+                    style: 'width: 10rem; height: 4rem',
+                },
                 onClick: onSubmitClick,
                 children: [
                     'Build'

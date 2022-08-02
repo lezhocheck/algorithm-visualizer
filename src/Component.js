@@ -1,6 +1,5 @@
 import ComponentError from "./ComponentError";
-import Rect from "./main/utils/Rect";
-import Vector2 from "./main/utils/Vector2";
+import Validator from "./Validator";
 
 // Guarantee unique ID
 let __ID = 0;
@@ -36,11 +35,6 @@ export default class Component {
         return this._domElement.value;
     }
 
-    get boundRect() {
-        const rect = this._domElement.getBoundingClientRect();
-        return new Rect(new Vector2(rect.x, rect.y), rect.width, rect.height);
-    }
-
     get checked() {
         return this._domElement.checked;
     }
@@ -56,7 +50,7 @@ export default class Component {
     }
 
     removeChildren() {
-        this._domElement.removeChildren();
+        this._domElement.replaceChildren();
     }
 
     removeAttribute(attribute) {
@@ -81,20 +75,15 @@ export default class Component {
     }
 
     removeChild(child) {
-        if (child instanceof Component) {
-            this._domElement.removeChild(child._domElement);
-        } else {
-            throw new ComponentError(`Unknown child '${child}' type`);
-        }
+        Validator.checkInstance(ComponentError, Component, {child: child});
+        this._domElement.removeChild(child._domElement);
     }
 
     // If attribute exists already -> the value will be updated
     // else -> attribute will be added
     // the same with children
     update(properties) {
-        if (properties == null) {
-            throw new ComponentError(`Properties are undefined`);
-        }
+        Validator.checkInstance(ComponentError, Object, {properties: properties});
 
         const attributes = properties.hasOwnProperty('attributes') ? properties.attributes : null;
         const children = properties.hasOwnProperty('children') ? properties.children : null;
@@ -113,9 +102,7 @@ export default class Component {
     }
 
     getProperty(property) {
-        if (!this.hasProperty(property)) {
-            throw new ComponentError(`Object has not got such an attribute`);
-        }
+        Validator.checkInstance(ComponentError, Object, {property: this._domElement[property]});
         return this._domElement[property];
     }
 
@@ -127,17 +114,13 @@ export default class Component {
     }
 
     deleteProperty(property) {
-        if (!this.hasProperty(property)) {
-            throw new ComponentError(`Object has not got such an attribute`);
-        }
+        Validator.checkInstance(ComponentError, Object, {property: this._domElement[property]});
         delete this._domElement[property];
     }
 
     #update(attributes, children) {
         for (let key in attributes) {
-            if (typeof key !== 'string') {
-                throw new ComponentError(`Invalid attribute name`);
-            } else if (key === 'id') {
+            if (key === 'id') {
                 throw new ComponentError(`Cannot set an id to the component`);
             } else if (key === 'className') {
                 this._domElement.className = attributes[key];
@@ -147,18 +130,19 @@ export default class Component {
             this._domElement.setAttribute(key, attributes[key]);
         }
 
+        Validator.checkInstance(ComponentError, [Object, String, Component, null], {children: children});
+
         if (children instanceof Component || typeof children === 'string') {
             this.#process_child(children);
         } else if (Array.isArray(children)) {
             children.forEach(child => {
                 this.#process_child(child);
             });
-        } else if (children != null) {
-            throw new ComponentError(`Unknown type '${typeof children}'. Expected 'Array'`)
         }
     }
 
     #process_child(child) {
+        Validator.checkInstance(ComponentError, [String, Component], {child: child});
         if (child instanceof Component) {
             const c = this._domElement.querySelector('#' + child.#id);
             if (c == null) {
@@ -168,8 +152,6 @@ export default class Component {
             }
         } else if(typeof child === 'string') {
             this._domElement.textContent = child;
-        } else {
-            throw new ComponentError(`Cannot add a child with type '${typeof child}'`);
         }
     }
 }

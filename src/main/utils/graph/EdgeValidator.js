@@ -56,7 +56,7 @@ class EdgeValidator {
 
     get() {
         if (this.isValid(this.#inputData.start, this.#inputData.end, this.#inputData.weight).result === false) {
-            throw new UtilsError(`Data is not valid`);
+            throw new UtilsError(`Provided data is not valid`);
         }
         return new Edge(this.#inputData.start, this.#inputData.end, this.#inputData.weight);
     }

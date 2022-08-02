@@ -1,4 +1,5 @@
 import UtilsError from "./UtilsError";
+import Validator from "../../Validator";
 
 export default class CodeObserver {
 
@@ -15,12 +16,8 @@ export default class CodeObserver {
     }
 
     saveState(title, args) {
-        if (typeof title !== 'string') {
-            throw new UtilsError(`Parameter 'title' must be of type 'string'`);
-        }
-        if (typeof args !== 'object' || args == null) {
-            throw new UtilsError(`Parameter 'args' must be of type 'object'`);
-        }
+        Validator.checkInstance(UtilsError, String, {title: title});
+        Validator.checkInstance(UtilsError, Object, {args: args});
         for (let i in args) {
             if (args.hasOwnProperty(i)) {
                 this.#savedArgsNames.add(i);
@@ -44,7 +41,6 @@ export default class CodeObserver {
     }
 
     hasNext(title) {
-        console.log(this)
         if (!this.hasTitle(title)) {
             throw new UtilsError(`Unknown title`);
         }
@@ -52,7 +48,6 @@ export default class CodeObserver {
     }
 
     hasPrevious(title) {
-        console.log(this)
         if (!this.hasTitle(title)) {
             throw new UtilsError(`Unknown title`);
         }
@@ -63,9 +58,7 @@ export default class CodeObserver {
         if (!this.#currentStates.has(title)) {
             throw new UtilsError(`Unknown title`);
         }
-        if (typeof position !== 'number') {
-            throw new UtilsError(`Parameter 'position' must be of type 'number'`);
-        }
+        Validator.checkInstance(UtilsError, Number, {position: position});
         if (position < 0 || position >= this.#states.length) {
             throw new UtilsError(`Invalid position value`);
         }

@@ -1,6 +1,7 @@
 import UtilsError from "./UtilsError";
 import BaseObject from "./BaseObject";
 import Colors from "./Colors";
+import Validator from "../../Validator";
 
 export default class Text extends BaseObject {
 
@@ -14,10 +15,7 @@ export default class Text extends BaseObject {
     constructor(position, text, colors, font = 'serif', size = 36) {
         super(position);
         this.text = text;
-        if (!(colors instanceof Colors)) {
-            throw new UtilsError(`Parameter 'colors' must be 'Colors'`);
-        }
-        this.#colors = colors;
+        this.colors = colors;
         this.#horizontalAlign = 'center';
         this.#verticalAlign = 'middle';
         this.font = font;
@@ -25,53 +23,35 @@ export default class Text extends BaseObject {
     }
 
     set colors(value) {
-        if (!(value instanceof Colors)) {
-            throw new UtilsError(`Parameter 'colors' must be 'Colors'`);
-        }
+        Validator.checkInstance(UtilsError, Colors, {value: value});
         this.#colors = value;
     }
     get colors() { return this.#colors; }
 
     get text() { return this.#text; }
     set text(value) {
-        if (typeof value !== 'string') {
-            throw new UtilsError(`Parameter 'text' must be 'string'`);
-        }
+        Validator.checkInstance(UtilsError, String, {value: value});
         this.#text = value;
     }
+
     get horizontalAlign() { return this.#horizontalAlign; }
-    set horizontalAlign(value) {
-        if (typeof value !== 'string') {
-            throw new UtilsError(`Parameter 'horizontalAlign' must be 'string'`);
-        }
-        this.#font = value;
-    }
     get verticalAlign() { return this.#verticalAlign; }
-    set verticalAlign(value) {
-        if (typeof value !== 'string') {
-            throw new UtilsError(`Parameter 'verticalAlign' must be 'string'`);
-        }
-        this.#font = value;
-    }
+
     get font() { return this.#font; }
     set font(value) {
-        if (typeof value !== 'string') {
-            throw new UtilsError(`Parameter 'font' must be 'string'`);
-        }
+        Validator.checkInstance(UtilsError, String, {value: value});
         this.#font = value;
     }
 
     get size() { return this.#size; }
     set size(value) {
-        if (typeof value !== 'number') {
-            throw new UtilsError(`Parameter 'size' must be 'number'`);
-        }
+        Validator.checkInstance(UtilsError, Number, {value: value});
         this.#size = value;
     }
 
     draw(context) {
         if (this.#colors.fill == null) {
-            throw new UtilsError(`This text supports only fill`);
+            throw new UtilsError(`The 'Text' object supports fill only`);
         }
         context.fillColor(this.#colors.fill);
         context.textAlign(this.horizontalAlign, this.verticalAlign);

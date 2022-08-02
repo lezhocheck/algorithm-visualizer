@@ -1,13 +1,14 @@
 import Component from "./Component";
 import Canvas from "./main/Canvas/Canvas";
 import Header from "./main/Header/Header";
-import ComponentError from "./ComponentError";
 import InputData from "./main/InputData/InputData";
 import {Graph} from "./main/utils/graph/Graph";
 import Popup from "./main/Popup/Popup";
 import Vector2 from "./main/utils/Vector2";
 import Menu from "./main/Menu/Menu";
 import Information from "./main/Information/Information";
+import Validator from "./Validator";
+import LayoutError from "./main/LayoutError";
 
 const App = function () {
 
@@ -18,8 +19,10 @@ const App = function () {
     let showPopup;
     let closePopup;
 
+    let isFirstClick = false;
     let setEnableFunction;
     let showInformationFunction;
+    let setFindButtonEnabled;
 
     const canvas = new Canvas({
         adaptive: true,
@@ -34,9 +37,7 @@ const App = function () {
     const RANDOM_POPUP_OFFSET = 200;
 
     function onFindButtonClick() {
-        if (findFunction == null) {
-            throw new ComponentError(`Find function must be set`);
-        }
+        Validator.checkInstance(LayoutError, Function, {findFunction: findFunction});
         findFunction();
     }
 
@@ -68,7 +69,6 @@ const App = function () {
         const graph = getGraph();
         if (graph == null) { return; }
         graph.enableObserver = true;
-
         const observer = graph.observer;
 
         if (observer.hasPrevious('bfs')) {
@@ -80,7 +80,10 @@ const App = function () {
         const graph = getGraph();
         if (graph == null) { return; }
         graph.enableObserver = true;
-
+        if (!isFirstClick) {
+            graph.calculateMinCut();
+            isFirstClick = true;
+        }
         const observer = graph.observer;
 
         if (observer.hasNext('bfs')) {
@@ -110,7 +113,8 @@ const App = function () {
                 left: left,
                 right: right,
                 menu: menu,
-                showInformationFunction: showInformationFunction
+                showInformationFunction: showInformationFunction,
+                setFindButtonEnabled: (value) => setFindButtonEnabled = value,
             }),
             new Component('div', {
                 attributes: {
@@ -122,7 +126,8 @@ const App = function () {
                         scene: scene,
                         grid: grid,
                         baseObjectContainer: baseObjectContainer,
-                        closePopup: closePopup
+                        closePopup: closePopup,
+                        setFindButtonEnabled: setFindButtonEnabled
                     })
                 ]
             }),

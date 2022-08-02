@@ -1,6 +1,7 @@
 import NotImplementedError from "./NotImplementedError";
 import Vector2 from "./Vector2";
 import UtilsError from "./UtilsError";
+import Validator from "../../Validator";
 
 export default class BaseObject {
 
@@ -12,16 +13,12 @@ export default class BaseObject {
 
     get position() { return this.#position; }
     set position(value) {
-        if (!(value instanceof Vector2)) {
-            throw new UtilsError(`Parameter 'position' must be 'Vector2'`);
-        }
+        Validator.checkInstance(UtilsError, Vector2, {position: value});
         this.#position = value;
     }
 
     move(offset) {
-        if (!(offset instanceof Vector2)) {
-            throw new UtilsError(`Parameter 'offset' must be 'Vector2'`);
-        }
+        Validator.checkInstance(UtilsError, Vector2, {offset: offset});
         this.#position.add(offset, true);
     }
 

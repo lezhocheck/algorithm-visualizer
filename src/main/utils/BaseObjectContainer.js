@@ -1,6 +1,6 @@
-import Rect from "./Rect";
 import UtilsError from "./UtilsError";
 import BaseObject from "./BaseObject";
+import Validator from "../../Validator";
 
 export default class BaseObjectContainer {
 
@@ -15,9 +15,7 @@ export default class BaseObjectContainer {
     }
 
     add(object) {
-        if (!(object instanceof BaseObject)) {
-            throw new UtilsError(`Unknown type of object ${object}`);
-        }
+        Validator.checkInstance(UtilsError, BaseObject, {object: object});
         if (this.#objects.has(object)) {
             throw new UtilsError(`Object is already in the container`);
         }
@@ -26,17 +24,13 @@ export default class BaseObjectContainer {
 
     remove(object) {
         if (!this.#objects.has(object)) {
-            throw new UtilsError(`Primitive is not in the container`);
+            throw new UtilsError(`Object is not in the container`);
         }
         this.#objects.delete(object);
     }
 
     forEach(callback) {
         this.#objects.forEach(x => callback(x));
-    }
-
-    hasOfType(classType) {
-        return this.findOfType(classType).length !== 0;
     }
 
     findOfType(classType) {

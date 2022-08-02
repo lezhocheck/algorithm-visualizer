@@ -1,6 +1,7 @@
 import UtilsError from "./UtilsError";
 import BaseObject from "./BaseObject";
 import Colors from "./Colors";
+import Validator from "../../Validator";
 
 export default class Circle extends BaseObject {
 
@@ -9,25 +10,18 @@ export default class Circle extends BaseObject {
 
     constructor(position, radius, colors) {
         super(position);
-        if (!(colors instanceof Colors)) {
-            throw new UtilsError(`Parameter 'colors' must be 'Colors'`);
-        }
-        this.#colors = colors;
+        this.colors = colors;
         this.radius = radius;
     }
 
     get colors() { return this.#colors; }
     set colors(value) {
-        if (!(value instanceof Colors)) {
-            throw new UtilsError(`Parameter 'colors' must be 'Colors'`);
-        }
+        Validator.checkInstance(UtilsError, Colors, {colors: value});
         this.#colors = value;
     }
 
     set radius(value) {
-        if (typeof value !== 'number') {
-            throw new UtilsError(`Parameter 'radius' must be 'number'`);
-        }
+        Validator.checkInstance(UtilsError, Number, {radius: value});
         this.#radius = value;
     }
     get radius() { return this.#radius; }

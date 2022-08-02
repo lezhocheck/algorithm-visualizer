@@ -4,7 +4,8 @@ import {EdgeValidator, InvalidField} from "../utils/graph/EdgeValidator";
 import classes from './EdgeInput.module.scss';
 import Button from "../Button/Button";
 import {Edge} from "../utils/graph/AdjacencyTable";
-import UtilsError from "../utils/UtilsError";
+import Validator from "../../Validator";
+import LayoutError from "../LayoutError";
 
 const EdgeInput = function (properties) {
 
@@ -19,10 +20,8 @@ const EdgeInput = function (properties) {
         });
     });
 
-    properties.setAbleFunction((value) => {
-        if (typeof value !== 'boolean') {
-            throw new UtilsError(`Expected boolean value`);
-        }
+    properties.setActiveFunction((value) => {
+        Validator.checkInstance(LayoutError, Boolean, {active: value});
         startInput.setValid(value);
         endInput.setValid(value);
         weightInput.setValid(value);
@@ -86,8 +85,6 @@ const EdgeInput = function (properties) {
             endInput.input,
             weightInput.input,
             new Button({
-                width: '1.5rem',
-                height: '1.5rem',
                 onClick: () => properties.onDeleteButtonClick(index),
                 children: [
                     new Component('span', {

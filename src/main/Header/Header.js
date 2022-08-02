@@ -1,9 +1,26 @@
 import Component from "../../Component";
 import classes from "./Header.module.scss";
 import Button from "../Button/Button";
-import Menu from "../Menu/Menu";
 
 const Header = function (properties) {
+
+    const findButton = new Button({
+        onClick: properties.onFindButtonClick,
+        setEnabled: properties.setFindButtonEnabled,
+        attributes: {
+            disabled: true
+        },
+        children: [
+            new Component('span', {
+                attributes: {
+                    className: 'material-icon'
+                },
+                children: [
+                    'search'
+                ]
+            })
+        ]
+    });
 
     return new Component('div', {
             attributes: {
@@ -15,8 +32,7 @@ const Header = function (properties) {
                         className: classes.container
                     },
                     children: [
-                        new Button({width: 'auto',
-                            height: 'auto',
+                        new Button({
                             onClick: properties.menu,
                             children: [
                                 new Component('span', {
@@ -49,8 +65,7 @@ const Header = function (properties) {
                                 className: classes.groupContainer
                             },
                             children: [
-                                new Button({width: 'auto',
-                                    height: 'auto',
+                                new Button({
                                     onClick: properties.run,
                                     children: [
                                         new Component('span', {
@@ -63,9 +78,9 @@ const Header = function (properties) {
                                         })
                                     ]
                                 }),
-                                new Button({width: 'auto',
-                                    height: 'auto',
+                                new Button({
                                     onClick: properties.left,
+                                    disabled: true,
                                     children: [
                                         new Component('span', {
                                             attributes: {
@@ -77,8 +92,7 @@ const Header = function (properties) {
                                         })
                                     ]
                                 }),
-                                new Button({width: 'auto',
-                                    height: 'auto',
+                                new Button({
                                     onClick: properties.right,
                                     children: [
                                         new Component('span', {
@@ -106,8 +120,7 @@ const Header = function (properties) {
                                 style: 'margin-left: 40rem;'
                             },
                             children: [
-                                new Button({width: 'auto',
-                                    height: 'auto',
+                                new Button({
                                     onClick: properties.showInformationFunction,
                                     children: [
                                         new Component('span', {
@@ -120,20 +133,7 @@ const Header = function (properties) {
                                         })
                                     ]
                                 }),
-                                new Button({width: 'auto',
-                                    height: 'auto',
-                                    onClick: properties.onFindButtonClick,
-                                    children: [
-                                        new Component('span', {
-                                            attributes: {
-                                                className: 'material-icon'
-                                            },
-                                            children: [
-                                                'search'
-                                            ]
-                                        })
-                                    ]
-                                })
+                                findButton
                             ]
                         })
                     ]

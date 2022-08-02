@@ -1,11 +1,12 @@
 import EventComponent from "../../EventComponent";
 import Component from "../../Component";
 import classes from './Input.module.scss';
+import LayoutError from "../LayoutError";
 
 const Input = function (properties) {
 
     if (!['text', 'number'].includes(properties.type)) {
-        throw new Error(`Unsupported input type`);
+        throw new LayoutError(`Unsupported input type`);
     }
 
     function isValid(value) {
@@ -49,7 +50,7 @@ const Input = function (properties) {
                 eventHandlers: [
                     {
                         name: 'input',
-                        handler: (e) => isValid(true)
+                        handler: () => isValid(true)
                     }
                 ],
                 attributes: {

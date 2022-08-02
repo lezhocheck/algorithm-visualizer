@@ -1,7 +1,8 @@
 import ComponentError from "./ComponentError";
 import BaseObjectContainer from "./main/utils/BaseObjectContainer";
 import Vector2 from "./main/utils/Vector2";
-import Transformation from "./main/utils/transformation/Transformation";
+import Validator from "./Validator";
+import BaseObject from "./main/utils/BaseObject";
 
 export default class Context {
 
@@ -21,12 +22,8 @@ export default class Context {
     #adaptive;
 
     constructor(context, adaptive = false) {
-        if (Context.#ALLOWED.find(element => context instanceof element) == null) {
-            throw new ComponentError(`Invalid context '${context}'`);
-        }
-        if (typeof adaptive !== 'boolean') {
-            throw new ComponentError(`Invalid type of 'adaptive' parameter. Expected 'boolean'`);
-        }
+        Validator.checkInstance(ComponentError, Context.#ALLOWED, {context: context});
+        Validator.checkInstance(ComponentError, Boolean, {adaptive: adaptive});
         this.#adaptive = adaptive;
         this.#context = context;
         this.#baseObjectContainer = new BaseObjectContainer();
@@ -44,58 +41,40 @@ export default class Context {
     endPath() { this.#context.closePath(); }
 
     textAlign(horizontal, vertical) {
-        if (typeof horizontal !== 'string' || typeof vertical !== 'string') {
-            throw new ComponentError(`Invalid type of parameters. Expected 'string' for both arguments`);
-        }
+        Validator.checkInstance(ComponentError, String, {horizontal: horizontal}, {vertical: vertical});
         this.#context.textAlign = horizontal;
         this.#context.textBaseline = vertical;
     }
 
     moveTo(position) {
-        if (!(position instanceof Vector2)) {
-            throw new ComponentError(`Invalid type of 'position' parameter. Expected 'Vector2'`);
-        }
+        Validator.checkInstance(ComponentError, Vector2, {position: position});
         this.#context.moveTo(position.x, position.y);
     }
 
     lineTo(position) {
-        if (!(position instanceof Vector2)) {
-            throw new ComponentError(`Invalid type of 'position' parameter. Expected 'Vector2'`);
-        }
+        Validator.checkInstance(ComponentError, Vector2, {position: position});
         this.#context.lineTo(position.x, position.y);
     }
 
     lineWidth(value) {
-        if (typeof value !== 'number') {
-            throw new ComponentError(`Invalid type of parameter. Expected 'number'`);
-        }
+        Validator.checkInstance(ComponentError, Number, {value: value});
         this.#context.lineWidth = value;
     }
 
     arc(position, radius, start = 0, end = 2 * Math.PI, clockwise = false) {
-        if (!(position instanceof Vector2)) {
-            throw new ComponentError(`Invalid type of 'position' parameter. Expected 'Vector2'`);
-        }
-        if (typeof radius !== 'number' || typeof start !== 'number' || typeof end !== 'number') {
-            throw new ComponentError(`Invalid type of parameter. Expected 'number'`);
-        }
-        if (typeof clockwise !== 'boolean') {
-            throw new ComponentError(`Invalid type of parameter. Expected 'boolean'`);
-        }
+        Validator.checkInstance(ComponentError, Vector2, {position: position});
+        Validator.checkInstance(ComponentError, Number, {radius: radius}, {start: start}, {end: end});
+        Validator.checkInstance(ComponentError, Boolean, {clockwise: clockwise});
         this.#context.arc(position.x, position.y, radius, start, end, !clockwise);
     }
 
     strokeColor(color) {
-        if (typeof color !== 'string') {
-            throw new ComponentError(`Invalid type of 'color' parameter. Expected 'string'`);
-        }
+        Validator.checkInstance(ComponentError, String, {color: color});
         this.#context.strokeStyle = color;
     }
 
     fillColor(color) {
-        if (typeof color !== 'string') {
-            throw new ComponentError(`Invalid type of 'color' parameter. Expected 'string'`);
-        }
+        Validator.checkInstance(ComponentError, String, {color: color});
         this.#context.fillStyle = color;
     }
 
@@ -103,20 +82,16 @@ export default class Context {
     fill() { this.#context.fill(); }
 
     text(text, position, font) {
-        if (typeof text !== 'string' || typeof font !== 'string') {
-            throw new ComponentError(`Invalid type of parameter. Expected 'string'`);
-        }
-        if (!(position instanceof Vector2)) {
-            throw new ComponentError(`Invalid type of 'position' parameter. Expected 'Vector2'`);
-        }
+        Validator.checkInstance(ComponentError, String, {text: text}, {font: font});
+        Validator.checkInstance(ComponentError, Vector2, {position: position});
         this.#context.font = font;
         this.#context.fillText(text, position.x, position.y);
     }
 
     #processObject(object) {
+        Validator.checkInstance(ComponentError, BaseObject, {object: object});
         if (this.#transformation != null) {
-            // TODO rotation
-            this.#context.setTransform(this.#transformation.scale.x, 0, 0, this.#transformation.scale.y,
+            this.#context.setTransform(this.#transformation.scale, 0, 0, this.#transformation.scale,
                 this.#transformation.translation.x, this.#transformation.translation.y);
         }
 
@@ -136,21 +111,20 @@ export default class Context {
         if (this.#transformation == null) {
             throw new ComponentError(`Context must be transformable for an adaptive conversion`);
         }
-        const delta = Context.#SCALE_VALUE / this.#transformation.scale.minCoordinate;
+        const delta = Context.#SCALE_VALUE / this.#transformation.scale;
+        Validator.checkInstance(ComponentError, [Vector2, Number], {value: value});
+
         if (value instanceof Vector2) {
             return value.multiply(delta);
         } else if (typeof value === 'number') {
             return value * delta;
-        } else {
-            throw new ComponentError(`Unknown value type '${typeof value}'`);
         }
     }
 
-    draw(transformation = null) {
-        if (!(transformation instanceof Transformation) && transformation != null) {
-            throw new ComponentError(`Invalid type of 'transformation' parameter. Expected 'Transformation'`);
-        }
-        this.#transformation = transformation;
+    draw(translation, scale) {
+        Validator.checkInstance(ComponentError, Vector2, {translation: translation});
+        Validator.checkInstance(ComponentError, Number, {scale: scale});
+        this.#transformation = {translation: translation, scale: scale};
         this.#baseObjectContainer.forEach(value => {
             this.#processObject(value);
         });

@@ -1,6 +1,7 @@
 import UtilsError from "./UtilsError";
 import BaseObject from "./BaseObject";
 import Vector2 from "./Vector2";
+import Validator from "../../Validator";
 
 export default class Grid extends BaseObject {
 
@@ -12,16 +13,10 @@ export default class Grid extends BaseObject {
 
     constructor(position, width, height, step) {
         super(position);
-        this.#width = Grid.#validate(width);
-        this.#height = Grid.#validate(height);
-        this.#step = Grid.#validate(step);
-    }
-
-    static #validate(number) {
-        if (typeof number !== 'number') {
-            throw new UtilsError(`Argument must be a 'number'`);
-        }
-        return number;
+        Validator.checkInstance(UtilsError, Number, {width: width}, {height: height}, {step: step});
+        this.#width = width;
+        this.#height = height;
+        this.#step = step;
     }
 
     get center() { return this.position.add(new Vector2(this.#width / 2, this.#height / 2)); }

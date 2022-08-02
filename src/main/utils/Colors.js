@@ -1,4 +1,5 @@
 import UtilsError from "./UtilsError";
+import Validator from "../../Validator";
 
 export default class Colors {
 
@@ -11,17 +12,13 @@ export default class Colors {
     }
 
     set fill(value) {
-        if (typeof value !== 'string' && value != null) {
-            throw new UtilsError(`Parameter 'fill' must be 'string'`);
-        }
+        Validator.checkInstance(UtilsError, [String, null], {value: value});
         this.#fill = value;
     }
     get fill() { return this.#fill; }
 
     set stroke(value) {
-        if (typeof value !== 'string' && value != null) {
-            throw new UtilsError(`Parameter 'stroke' must be 'string'`);
-        }
+        Validator.checkInstance(UtilsError, [String, null], {value: value});
         this.#stroke = value;
     }
     get stroke() { return this.#stroke; }

@@ -1,28 +1,57 @@
 import EventComponent from "../../EventComponent";
-import styles from "./Button.module.scss";
+import classes from "./Button.module.scss";
+import Validator from "../../Validator";
+import LayoutError from "../LayoutError";
 
 const Button = function (properties) {
 
+    if (properties.hasOwnProperty('setEnabled')) {
+        properties.setEnabled((value) => {
+            Validator.checkInstance(LayoutError, Boolean, {value: value});
+            component.update({
+                attributes: {
+                    disabled: !value
+                }
+            });
+            if (value === true) {
+                component.removeAttribute('disabled');
+            }
+        });
+    }
+
     function onButtonClick() {
+        if (properties.hasOwnProperty('disabled') &&
+            properties.disabled === true) {
+            return;
+        }
         if (properties.hasOwnProperty('onClick')) {
             properties.onClick();
         }
     }
 
-    return new EventComponent('button', {
+    const component = new EventComponent('button', {
         eventHandlers: {
             name: 'click',
             handler: onButtonClick
         },
         attributes: {
-            className: styles.button,
-            style: 'width: ' + properties.width + '; height: ' + properties.height,
+            className: classes.button,
             ...properties.attributes
         },
         children: [
             ...properties.children
         ]
     });
+
+    if (properties.hasOwnProperty('disabled') && properties.disabled === true) {
+        component.update({
+            attributes: {
+                disabled: ''
+            }
+        });
+    }
+
+    return component;
 
 };
 

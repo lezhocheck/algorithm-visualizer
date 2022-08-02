@@ -8,6 +8,7 @@ import BaseObject from "../BaseObject";
 import EdgeView from "./EdgeView";
 import Scene from "../Scene";
 import Grid from "../Grid";
+import Validator from "../../../Validator";
 
 class GraphNode extends BaseObject {
 
@@ -61,18 +62,10 @@ class Graph extends BaseObject {
     #observerState;
 
     constructor(grid, scene, adjacencyBase, s, t) {
-        if (!(grid instanceof Grid)) {
-            throw new UtilsError(`Unknown type of grid. Expected 'Grid'`);
-        }
-        if (!(scene instanceof Scene)) {
-            throw new UtilsError(`Unknown type of scene. Expected 'Scene'`);
-        }
-        if (!(adjacencyBase instanceof AdjacencyBase)) {
-            throw new UtilsError(`Unknown type of adjacencyBase. Expected 'AdjacencyBase'`);
-        }
-        if (typeof s !== 'number' || typeof t !== 'number') {
-            throw new UtilsError(`Unknown type of parameter 's' or 't'. Expected 'number'`);
-        }
+        Validator.checkInstance(UtilsError, Grid, {grid: grid});
+        Validator.checkInstance(UtilsError, Scene, {scene: scene});
+        Validator.checkInstance(UtilsError, AdjacencyBase, {adjacencyBase: adjacencyBase});
+        Validator.checkInstance(UtilsError, Number, {s: s}, {t: t});
 
         const vertices = adjacencyBase.getVertices();
         const edges = adjacencyBase.getEdges();
@@ -118,9 +111,7 @@ class Graph extends BaseObject {
             const edge = edges[i];
             const startNode = this.#graphNodes.find(x => x.id === edge.startVertex);
             const endNode = this.#graphNodes.find(x => x.id === edge.endVertex);
-            if (startNode == null || endNode == null) {
-                throw new UtilsError(`Unknown edge`);
-            }
+            Validator.checkInstance(UtilsError, GraphNode, {startNode: startNode}, {endNode: endNode});
             const edgeView = new EdgeView(startNode, endNode, scene, edge);
             this.#edgeViews.push(edgeView);
         }
@@ -128,9 +119,7 @@ class Graph extends BaseObject {
     }
 
     set enableObserver(value) {
-        if (typeof value !== 'boolean') {
-            throw new UtilsError(`Unknown type of observerState. Expected 'boolean'`);
-        }
+        Validator.checkInstance(UtilsError, Boolean, {enableObserver: value});
         this.#observerState = value;
     }
 
