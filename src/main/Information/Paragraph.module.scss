@@ -1,0 +1,22 @@
+@use 'src/styles/index' as index;
+
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background: rgba(index.$primaryObject, 0.4);
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+
+.text {
+  width: 70%;
+  margin: 2rem;
+  line-height: 2.5rem;
+  height: auto;
+  display: flex;
+  align-items: center;
+  color: index.$text;
+  font-size: 1.3rem;
+}

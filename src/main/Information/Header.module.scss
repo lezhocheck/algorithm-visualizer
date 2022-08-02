@@ -1,0 +1,14 @@
+@use 'src/styles/index' as index;
+
+.title {
+  width: 95%;
+  height: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  background: index.$primaryObject;
+  color: index.$text;
+  font-size: 3rem;
+  margin: 1rem;
+}
