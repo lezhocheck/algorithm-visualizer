@@ -8,8 +8,8 @@ const EdgesInput = function (properties) {
     const edges = [];
 
     properties.setSetValidationDataFunction((value) => {
-        for (let i in edges) {
-            edges[i].setValidationData(value);
+        for (const edge of edges) {
+            edge.setValidationData(value);
         }
     });
 
@@ -25,7 +25,7 @@ const EdgesInput = function (properties) {
         let obj = edges.splice(index, 1)[0];
         container.removeChild(obj.edgeInput);
 
-        for (let i in edges) {
+        for (const i in edges) {
             edges[i].setIndexFunction(parseInt(i));
         }
         update();

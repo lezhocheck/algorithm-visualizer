@@ -59,7 +59,6 @@ class Graph extends BaseObject {
     #size;
     #s;
     #t;
-    #observerState;
 
     constructor(grid, scene, adjacencyBase, s, t) {
         Validator.checkInstance(UtilsError, Grid, {grid: grid});
@@ -78,7 +77,6 @@ class Graph extends BaseObject {
         super(grid.center.subtract(radius));
 
         this.#adjacencyBase = adjacencyBase;
-        this.#observerState = false;
         this.#s = s;
         this.#t = t;
 
@@ -86,29 +84,28 @@ class Graph extends BaseObject {
         this.#size = radius * 2;
         let positions = {};
 
-        for (let i in vertices) {
+        for (const vertex of vertices) {
             const r = radius * Math.sqrt(Math.random());
             const theta = Math.random() * 2 * Math.PI;
             const x = center.x + r * Math.cos(theta);
             const y = center.y + r * Math.sin(theta);
-            positions[vertices[i]] = new Vector2(x, y);
+            positions[vertex] = new Vector2(x, y);
         }
 
         this.#edgeViews = [];
         this.#graphNodes = [];
 
-        for (let i in vertices) {
-            let node = new GraphNode(positions[vertices[i]], vertices[i], 'normal');
-            if (vertices[i] === this.#s) {
+        for (const vertex of vertices) {
+            let node = new GraphNode(positions[vertex], vertex, 'normal');
+            if (vertex === this.#s) {
                 node.type = 'blue';
-            } else if (vertices[i] === this.#t) {
+            } else if (vertex === this.#t) {
                 node.type = 'red';
             }
             this.#graphNodes.push(node);
         }
 
-        for (let i in edges) {
-            const edge = edges[i];
+        for (const edge of edges) {
             const startNode = this.#graphNodes.find(x => x.id === edge.startVertex);
             const endNode = this.#graphNodes.find(x => x.id === edge.endVertex);
             Validator.checkInstance(UtilsError, GraphNode, {startNode: startNode}, {endNode: endNode});
@@ -118,42 +115,33 @@ class Graph extends BaseObject {
 
     }
 
-    set enableObserver(value) {
-        Validator.checkInstance(UtilsError, Boolean, {enableObserver: value});
-        this.#observerState = value;
-    }
-
     get size() { return new Vector2(this.#size, this.#size); }
     get center() { return this.position.add(this.size.divide(2)); }
     get observer() { return this.#adjacencyBase.observer; }
 
-    calculateMinCut() {
-        const minCutResult = this.#adjacencyBase.minCut(this.#s, this.#t);
-        for (let i in minCutResult.cutEdges) {
-            const edge = minCutResult.cutEdges[i];
-            const view = this.#edgeViews.find(x => x.edge.equals(edge));
-            view.defaultColor = new Colors('rgba(255, 153, 0, 0.6)');
+    updateEdges(condition, colors, save = true) {
+        Validator.checkInstance(UtilsError, Function, {condition: condition});
+        Validator.checkInstance(UtilsError, Colors, {colors: colors});
+        for (const edge of this.#edgeViews) {
+            if (!save) {
+                edge.mark(null);
+            }
+            if (condition(edge)) {
+                edge.mark(colors);
+            }
         }
+    }
 
-        return minCutResult.value;
+    calculateMinCut() {
+        return this.#adjacencyBase.minCut(this.#s, this.#t);
     }
 
     draw(context) {
-        for (let i in this.#edgeViews) {
-            const edgeView = this.#edgeViews[i];
-
-            if (this.#observerState === true) {
-                this.#adjacencyBase.observer.observe('bfs', (start, end) => {
-                    if (edgeView.edge.startVertex === start && edgeView.edge.endVertex === end) {
-                        edgeView.defaultColor = new Colors('red');
-                    }
-                });
-            }
-
+        for (const edgeView of this.#edgeViews) {
             edgeView.draw(context);
         }
-        for (let i in this.#graphNodes) {
-            this.#graphNodes[i].draw(context);
+        for (const graphNode of this.#graphNodes) {
+            graphNode.draw(context);
         }
     }
 

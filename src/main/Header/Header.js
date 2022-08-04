@@ -22,6 +22,37 @@ const Header = function (properties) {
         ]
     });
 
+    const leftButton = new Button({
+        onClick: properties.left,
+        setEnabled: properties.setLeftButtonEnabled,
+        disabled: true,
+        children: [
+            new Component('span', {
+                attributes: {
+                    className: 'material-icon'
+                },
+                children: [
+                    'arrow_left'
+                ]
+            })
+        ]
+    });
+
+    const rightButton = new Button({
+        onClick: properties.right,
+        setEnabled: properties.setRightButtonEnabled,
+        children: [
+            new Component('span', {
+                attributes: {
+                    className: 'material-icon'
+                },
+                children: [
+                    'arrow_right'
+                ]
+            })
+        ]
+    });
+
     return new Component('div', {
             attributes: {
                 className: classes.header
@@ -78,33 +109,8 @@ const Header = function (properties) {
                                         })
                                     ]
                                 }),
-                                new Button({
-                                    onClick: properties.left,
-                                    disabled: true,
-                                    children: [
-                                        new Component('span', {
-                                            attributes: {
-                                                className: 'material-icon'
-                                            },
-                                            children: [
-                                                'arrow_left'
-                                            ]
-                                        })
-                                    ]
-                                }),
-                                new Button({
-                                    onClick: properties.right,
-                                    children: [
-                                        new Component('span', {
-                                            attributes: {
-                                                className: 'material-icon'
-                                            },
-                                            children: [
-                                                'arrow_right'
-                                            ]
-                                        })
-                                    ]
-                                })
+                                leftButton,
+                                rightButton
                             ]
                         })
                     ]

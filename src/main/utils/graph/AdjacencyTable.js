@@ -141,7 +141,10 @@ class AdjacencyTable extends AdjacencyBase {
                     q.push(v);
                     parent[v] = u;
                     visited[v] = true;
-                    this.#observer.saveState('bfs', {start: v, end: u});
+
+                    const start = v + this.#startIndex;
+                    const end = u + this.#startIndex;
+                    this.#observer.saveState('bfs', {start: start, end: end});
                 }
             }
         }
@@ -168,17 +171,17 @@ class AdjacencyTable extends AdjacencyBase {
         let rGraph = JSON.parse(JSON.stringify(this.#container));
         let parent = new Array(rGraph.length);
         while (this.#bfs(rGraph, s, t, parent)) {
-            // Find minimum residual capacity of the edges along the
-            // path filled by BFS. Or we can say find the maximum flow
-            // through the path found.
             let pathFlow = Infinity;
             for (v = t; v !== s; v = parent[v]) {
                 u = parent[v];
+
+                const start = v + this.#startIndex;
+                const end = u + this.#startIndex;
+                this.#observer.saveState('flow', {start: start, end: end});
+
                 pathFlow = Math.min(pathFlow, rGraph[u][v]);
             }
 
-            // update residual capacities of the edges and reverse edges
-            // along the path
             for (v = t; v !== s; v = parent[v]) {
                 u = parent[v];
                 rGraph[u][v] -= pathFlow;
@@ -186,13 +189,9 @@ class AdjacencyTable extends AdjacencyBase {
             }
         }
 
-        // Flow is maximum now, find vertices reachable from s
-
         let visited = new Array(rGraph.length).fill(false);
         this.#dfs(rGraph, s, visited);
 
-        // Print all edges that are from a reachable vertex to
-        // non-reachable vertex in the original graph
         let minCutValue = 0;
         const edges = [];
 
@@ -201,6 +200,7 @@ class AdjacencyTable extends AdjacencyBase {
                 if (visited[i] && !visited[j] && this.#container[i][j] !== 0) {
                     const start = i + this.#startIndex;
                     const end = j + this.#startIndex;
+                    this.#observer.saveState('minCut', {start: start, end: end});
                     edges.push(new Edge(start, end, this.#container[i][j]));
                     minCutValue += this.#container[i][j];
                 }

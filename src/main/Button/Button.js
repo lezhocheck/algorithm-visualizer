@@ -5,23 +5,29 @@ import LayoutError from "../LayoutError";
 
 const Button = function (properties) {
 
+    let disabled = false;
+
+    if (properties.hasOwnProperty('disabled') && properties.disabled === true) {
+        disabled = true;
+    }
+
     if (properties.hasOwnProperty('setEnabled')) {
         properties.setEnabled((value) => {
             Validator.checkInstance(LayoutError, Boolean, {value: value});
+            disabled = !value;
             component.update({
                 attributes: {
-                    disabled: !value
+                    disabled: disabled
                 }
             });
-            if (value === true) {
+            if (disabled === false) {
                 component.removeAttribute('disabled');
             }
         });
     }
 
     function onButtonClick() {
-        if (properties.hasOwnProperty('disabled') &&
-            properties.disabled === true) {
+        if (disabled === true) {
             return;
         }
         if (properties.hasOwnProperty('onClick')) {
@@ -43,10 +49,10 @@ const Button = function (properties) {
         ]
     });
 
-    if (properties.hasOwnProperty('disabled') && properties.disabled === true) {
+    if (disabled === true) {
         component.update({
             attributes: {
-                disabled: ''
+                disabled: disabled
             }
         });
     }

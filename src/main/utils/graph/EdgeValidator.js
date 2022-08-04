@@ -30,7 +30,7 @@ class EdgeValidator {
         const keys = Object.keys(this.#inputData);
         let result = true;
         let errorSet = new Set();
-        for (let i in keys) {
+        for (const i in keys) {
             if (isNaN(this.#inputData[keys[i]])) {
                 result = false;
                 errorSet.add(InvalidField[Object.keys(InvalidField)[i]]);

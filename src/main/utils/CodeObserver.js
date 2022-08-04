@@ -5,8 +5,8 @@ export default class CodeObserver {
 
     #savedArgsNames;
     #states;
-    #currentStates;
     #counter;
+    #currentStates;
 
     constructor() {
         this.#states = new Map();
@@ -18,7 +18,7 @@ export default class CodeObserver {
     saveState(title, args) {
         Validator.checkInstance(UtilsError, String, {title: title});
         Validator.checkInstance(UtilsError, Object, {args: args});
-        for (let i in args) {
+        for (const i in args) {
             if (args.hasOwnProperty(i)) {
                 this.#savedArgsNames.add(i);
             }
@@ -29,14 +29,14 @@ export default class CodeObserver {
             array.push(state);
         } else {
             this.#states.set(title, [state]);
-            this.#currentStates.set(title, 0);
+            this._currentStates.set(title, 0);
         }
     }
 
     clear() {
         this.#states = new Map();
         this.#savedArgsNames = new Set();
-        this.#currentStates = new Map();
+        this._currentStates = new Map();
         this.#counter = Number.MIN_SAFE_INTEGER;
     }
 
@@ -44,25 +44,47 @@ export default class CodeObserver {
         if (!this.hasTitle(title)) {
             throw new UtilsError(`Unknown title`);
         }
-        return this.#currentStates.get(title) + 1 < this.#states.get(title).length;
+        return this._currentStates.get(title) + 1 < this.#states.get(title).length;
     }
 
     hasPrevious(title) {
         if (!this.hasTitle(title)) {
             throw new UtilsError(`Unknown title`);
         }
-        return this.#currentStates.get(title) - 1 >= 0;
+        return this._currentStates.get(title) - 1 >= 0;
     }
 
-    setCurrentState(title, position) {
-        if (!this.#currentStates.has(title)) {
-            throw new UtilsError(`Unknown title`);
+    static #merge(title, left, right) {
+        function mapItem(item) {
+            if (item.hasOwnProperty('title')) {
+                return {title: item.title, score: item.score, value: item.value};
+            } else {
+                return {title: title, score: item.score, value: item.value};
+            }
         }
-        Validator.checkInstance(UtilsError, Number, {position: position});
-        if (position < 0 || position >= this.#states.length) {
-            throw new UtilsError(`Invalid position value`);
+
+        let arr = [];
+        while (left.length && right.length) {
+            let item;
+            if (left[0].score < right[0].score) {
+                item = left.shift();
+            } else {
+                item = right.shift();
+            }
+            arr.push(mapItem(item));
         }
-        this.#currentStates.set(title, position);
+        const addLeft = left.map(item => mapItem(item));
+        const addRight = right.map(item => mapItem(item));
+
+        return [...arr, ...addLeft, ...addRight]
+    }
+
+    getAllStates() {
+        let container = [];
+        for (const [title, states] of this.#states) {
+            container = CodeObserver.#merge(title, container, states);
+        }
+        return container.map(item => new Object({title: item.title, value: item.value}));
     }
 
     hasTitle(title) {
@@ -73,13 +95,13 @@ export default class CodeObserver {
         if (!this.hasTitle(title)) {
             return;
         }
-        const current = this.#currentStates.get(title);
+        const current = this._currentStates.get(title);
         const state = this.#states.get(title)[current].value;
         const args = Object.keys(state).map(k => state[k]);
         const requiredArgs = __getParameters(handler);
-        for(let i in requiredArgs) {
-            if (!this.#savedArgsNames.has(requiredArgs[i])) {
-                throw new UtilsError(`Unknown handler argument '${requiredArgs[i]}'`);
+        for(const arg of requiredArgs) {
+            if (!this.#savedArgsNames.has(arg)) {
+                throw new UtilsError(`Unknown handler argument '${arg}'`);
             }
         }
         handler.apply(handler, args);
@@ -89,14 +111,16 @@ export default class CodeObserver {
         if (!this.hasNext(title)) {
             throw new UtilsError(`No elements`);
         }
-        this.#currentStates.set(this.#currentStates.get(title) + 1);
+        this._currentStates.set(title, this._currentStates.get(title) + 1);
+        console.log(this._currentStates.get(title))
     }
 
     previous(title) {
         if (!this.hasPrevious(title)) {
             throw new UtilsError(`No elements`);
         }
-        this.#currentStates.set(this.#currentStates.get(title) - 1);
+        this._currentStates.set(title, this._currentStates.get(title) - 1);
+        console.log(this._currentStates.get(title))
     }
 
 }

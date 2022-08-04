@@ -53,8 +53,7 @@ const InputData = function (properties) {
             valid = valid && result;
             valid = valid && !data.includes(null);
             if (valid) {
-                for (let i in data) {
-                    const edge = data[i];
+                for (const edge of data) {
                     adjacencyTable.addEdge(edge.startVertex, edge.endVertex, edge.weight);
                 }
             }
@@ -77,6 +76,7 @@ const InputData = function (properties) {
 
         const graph = new Graph(properties.grid, properties.scene, adjacencyTable, inputSValue, inputTValue);
         properties.baseObjectContainer.add(graph);
+        properties.calculateMinCut();
     }
 
     function getNumberInput(text, width, color = null) {

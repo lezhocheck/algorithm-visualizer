@@ -89,7 +89,7 @@ export default class Component {
         const children = properties.hasOwnProperty('children') ? properties.children : null;
 
         const filtered = Object.keys(properties).filter(x => x !== 'attributes' && x !== 'children');
-        for (let i in filtered) {
+        for (const i in filtered) {
             const prop = filtered[i];
             this.setProperty(prop, properties[prop]);
         }
@@ -119,7 +119,7 @@ export default class Component {
     }
 
     #update(attributes, children) {
-        for (let key in attributes) {
+        for (const key in attributes) {
             if (key === 'id') {
                 throw new ComponentError(`Cannot set an id to the component`);
             } else if (key === 'className') {

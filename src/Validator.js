@@ -34,8 +34,8 @@ export default class Validator {
         if (Array.isArray(expected)) {
             isValid = (instance) => {
                 let value = false;
-                for (let i in expected) {
-                    value |= process(instance, expected[i]);
+                for (const i of expected) {
+                    value |= process(instance, i);
                 }
                 return value;
             }

@@ -15,8 +15,8 @@ export default class EventComponent extends Component {
         this.#eventHandlers = [];
 
         if (Array.isArray(properties.eventHandlers)) {
-            for (let eventHandler in properties.eventHandlers) {
-                this.#process_handler(properties.eventHandlers[eventHandler]);
+            for (const eventHandler of properties.eventHandlers) {
+                this.#process_handler(eventHandler);
             }
         } else if (typeof properties.eventHandlers === 'object') {
             this.#process_handler(properties.eventHandlers);

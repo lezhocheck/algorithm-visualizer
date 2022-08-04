@@ -44,9 +44,8 @@ export default class BaseObjectContainer {
     }
 
     clearAllOfType(classType) {
-        let value = this.findOfType(classType);
-        for (let i in value) {
-            this.#objects.delete(value[i]);
+        for (const value of this.findOfType(classType)) {
+            this.#objects.delete(value);
         }
     }
 

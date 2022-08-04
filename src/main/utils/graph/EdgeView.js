@@ -16,11 +16,12 @@ export default class EdgeView extends BaseObject {
     #edge;
     #line;
     #text;
-    #defaultEdgeColor;
+
+    #edgeColor;
+    #markColor;
 
     static #DEFAULT_COLOR = new Colors('#99999955');
     static #SELECTED_COLOR = new Colors('#15650f');
-    static #SELECTED_TEXT_COLOR = '#33b416';
     static #WIDTH = 3;
     static #ARROW_SIZE = 15;
     static #EDGE_DETECTION_OFFSET = 0.1;
@@ -34,15 +35,39 @@ export default class EdgeView extends BaseObject {
         this.#end = end;
         this.#scene = scene;
         this.#edge = edge;
-        this.#defaultEdgeColor = EdgeView.#DEFAULT_COLOR;
-        this.#line = new Line(this.position, end.position, this.#defaultEdgeColor, EdgeView.#WIDTH);
+        this.#edgeColor = EdgeView.#DEFAULT_COLOR;
+        this.#markColor = null;
+        this.#line = new Line(this.position, end.position, EdgeView.#DEFAULT_COLOR, EdgeView.#WIDTH);
         this.#text = new Text(this.position.add(end.position).divide(2), edge.weight.toString(),
-            new Colors(null, this.#defaultEdgeColor.stroke));
+            new Colors(null, EdgeView.#DEFAULT_COLOR.stroke));
     }
 
-    get startGraphNode() { return this.#start; }
-    get endGraphNode() { return this.#end; }
     get edge() { return this.#edge; }
+
+    mark(colors) {
+        Validator.checkInstance(UtilsError, [Colors, null], {colors: colors});
+        this.#markColor = colors;
+    }
+
+
+    #updateView() {
+        if (this.#scene.hasEdge(this)) {
+            this.#edgeColor = EdgeView.#SELECTED_COLOR;
+            this.#text.size = 50;
+            this.#text.position = this.#scene.mousePosition;
+        } else {
+            this.#edgeColor = EdgeView.#DEFAULT_COLOR;
+            this.#text.size = 20;
+            this.#text.position = this.position.add(this.#line.end).divide(2);
+
+            if (this.#markColor != null) {
+                this.#edgeColor = this.#markColor;
+            }
+        }
+
+        this.#line.colors = this.#edgeColor;
+        this.#text.colors.fill = this.#edgeColor.stroke;
+    }
 
     #update(context) {
         const lineLength = Vector2.distance(this.#line.position, this.#line.end);
@@ -53,23 +78,7 @@ export default class EdgeView extends BaseObject {
         const isMouseIn = d1 + d2 >= lineLength - detectionOffsetAdaptive &&
             d1 + d2 <= lineLength + detectionOffsetAdaptive;
         isMouseIn ? this.#scene.selectEdge(this) : this.#scene.deselectEdge(this);
-
-        if (this.#scene.hasEdge(this)) {
-            this.#line.colors = EdgeView.#SELECTED_COLOR;
-            this.#text.colors.fill = EdgeView.#SELECTED_TEXT_COLOR;
-            this.#text.size = 50;
-            this.#text.position = this.#scene.mousePosition;
-        } else {
-            this.#line.colors = this.#defaultEdgeColor;
-            this.#text.colors.fill = this.#defaultEdgeColor.stroke;
-            this.#text.size = 20;
-            this.#text.position = this.position.add(this.#line.end).divide(2);
-        }
-    }
-
-    set defaultColor(value) {
-        Validator.checkInstance(UtilsError, Colors, {defaultColor: value});
-        this.#defaultEdgeColor = value;
+        this.#updateView();
     }
 
     #drawArrow(context, start, end, size) {

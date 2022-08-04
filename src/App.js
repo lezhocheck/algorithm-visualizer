@@ -9,6 +9,9 @@ import Menu from "./main/Menu/Menu";
 import Information from "./main/Information/Information";
 import Validator from "./Validator";
 import LayoutError from "./main/LayoutError";
+import Colors from "./main/utils/Colors";
+import {Edge} from "./main/utils/graph/AdjacencyTable";
+import UtilsError from "./main/utils/UtilsError";
 
 const App = function () {
 
@@ -19,10 +22,21 @@ const App = function () {
     let showPopup;
     let closePopup;
 
-    let isFirstClick = false;
     let setEnableFunction;
     let showInformationFunction;
     let setFindButtonEnabled;
+    let setLeftButtonEnabled;
+    let setRightButtonEnabled;
+
+    let minCut = null;
+    let states = null;
+    let currentState = 0;
+
+    const COLORS = {
+        bfs: new Colors('rgba(0,255,0,0.5)'),
+        flow: new Colors('rgba(255,255,0,0.5)'),
+        minCut: new Colors('rgba(255,80,6,0.5)')
+    };
 
     const canvas = new Canvas({
         adaptive: true,
@@ -60,35 +74,67 @@ const App = function () {
     function run() {
         const graph = getGraph();
         if (graph == null) { return; }
-        graph.enableObserver = false;
-        const minCut = graph.calculateMinCut();
-        showPopup(getPopupRandomPosition(), `Minimum S-T cut for the graph: ${minCut}`);
+
+        if (minCut != null) {
+            graph.updateEdges((edgeView) => {
+                return minCut.cutEdges.find(x => x.equals(edgeView.edge));
+            }, COLORS.minCut);
+        }
+
+        showPopup(getPopupRandomPosition(), `Minimum S-T cut for the graph: ${minCut.value}`);
+    }
+
+    function updateArrowsState() {
+        if (currentState + 1 < states.length) {
+            setRightButtonEnabled(true);
+        } else {
+            setRightButtonEnabled(false);
+        }
+
+        if (currentState - 1 >= 0) {
+            setLeftButtonEnabled(true);
+        } else {
+            setLeftButtonEnabled(false);
+        }
+
+        if (currentState === states.length - 1) {
+            showPopup(getPopupRandomPosition(), `Minimum S-T cut for the graph: ${minCut.value}`);
+        } else {
+            closePopup();
+        }
     }
 
     function left() {
         const graph = getGraph();
-        if (graph == null) { return; }
-        graph.enableObserver = true;
-        const observer = graph.observer;
+        if (graph == null || minCut == null) { return; }
+        currentState--;
 
-        if (observer.hasPrevious('bfs')) {
-            observer.previous('bfs');
-        }
+        const state = states[currentState];
+        const color = COLORS[state.title];
+        const save = state.title === 'minCut';
+        graph.updateEdges((edgeView) => {
+            Validator.checkInstance(UtilsError, Object, {value: state.value});
+            Validator.checkInstance(UtilsError, Number, {start: state.value.start}, {end: state.value.end});
+            return edgeView.edge.equals(new Edge(state.value.start, state.value.end));
+        }, color, save);
+        updateArrowsState();
     }
 
     function right() {
         const graph = getGraph();
-        if (graph == null) { return; }
-        graph.enableObserver = true;
-        if (!isFirstClick) {
-            graph.calculateMinCut();
-            isFirstClick = true;
-        }
-        const observer = graph.observer;
+        if (graph == null || minCut == null) { return; }
+        currentState++;
 
-        if (observer.hasNext('bfs')) {
-            observer.next('bfs');
-        }
+        const state = states[currentState];
+        const color = COLORS[state.title];
+        const save = state.title === 'minCut';
+        graph.updateEdges((edgeView) => {
+            const state = states[currentState];
+            Validator.checkInstance(UtilsError, Object, {value: state.value});
+            Validator.checkInstance(UtilsError, Number, {start: state.value.start}, {end: state.value.end});
+            return edgeView.edge.equals(new Edge(state.value.start, state.value.end));
+        }, color, save);
+        updateArrowsState();
     }
 
     function menu() {
@@ -115,6 +161,8 @@ const App = function () {
                 menu: menu,
                 showInformationFunction: showInformationFunction,
                 setFindButtonEnabled: (value) => setFindButtonEnabled = value,
+                setLeftButtonEnabled: (value) => setLeftButtonEnabled = value,
+                setRightButtonEnabled: (value) => setRightButtonEnabled = value
             }),
             new Component('div', {
                 attributes: {
@@ -127,7 +175,13 @@ const App = function () {
                         grid: grid,
                         baseObjectContainer: baseObjectContainer,
                         closePopup: closePopup,
-                        setFindButtonEnabled: setFindButtonEnabled
+                        setFindButtonEnabled: setFindButtonEnabled,
+                        calculateMinCut: () => {
+                            const graph = getGraph();
+                            if (graph == null) { return; }
+                            minCut = graph.calculateMinCut();
+                            states = graph.observer.getAllStates();
+                        }
                     })
                 ]
             }),
